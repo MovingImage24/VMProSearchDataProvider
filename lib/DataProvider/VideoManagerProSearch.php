@@ -5,6 +5,7 @@ namespace MovingImage\DataProvider;
 use MovingImage\Client\VMPro\Entity\VideoRequestParameters;
 use MovingImage\Client\VMPro\Entity\VideosRequestParameters;
 use MovingImage\Client\VMPro\Interfaces\ApiClientInterface;
+use MovingImage\Client\VMPro\Entity\EmbedCode;
 use MovingImage\DataProvider\Interfaces\DataProviderInterface;
 use MovingImage\DataProvider\Wrapper\Video;
 
@@ -51,29 +52,22 @@ class VideoManagerProSearch implements DataProviderInterface
      */
     public function getOne(array $options)
     {
-        if (!isset($options['id'])) {
+        if (isset($options['id'])) {
+            $videos = $this->getAll(['id' => $options['id']]);
+        } else {
             // Simply fetch the first video from the collection, but without
             // loading all videos inside the collection
             $options['limit'] = 1;
-
             $videos = $this->getAll($options);
-
-            if (count($videos) === 0) {
-                return null;
-            }
-
-            $video = array_shift($videos);
-
-        } else {
-
-            // Retrieve the video by ID straight from the API
-            $params = new VideoRequestParameters();
-            $video = $this->apiClient->getVideo($options['vm_id'], $options['id'], $params);
         }
 
-        $embedCode = $this->apiClient->getEmbedCode($options['vm_id'], $video->getId(), $options['player_id']);
+        if (count($videos) === 0) {
+            return null;
+        }
 
-        return new Video($video, $embedCode);
+        $video = array_shift($videos);
+
+        return new Video($video, new EmbedCode());
     }
 
     /**
