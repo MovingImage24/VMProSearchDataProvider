@@ -5,7 +5,6 @@ namespace MovingImage\DataProvider;
 use MovingImage\Client\VMPro\Entity\VideoRequestParameters;
 use MovingImage\Client\VMPro\Entity\VideosRequestParameters;
 use MovingImage\Client\VMPro\Interfaces\ApiClientInterface;
-use MovingImage\Client\VMPro\Entity\EmbedCode;
 use MovingImage\DataProvider\Interfaces\DataProviderInterface;
 use MovingImage\DataProvider\Wrapper\Video;
 
@@ -67,7 +66,9 @@ class VideoManagerProSearch implements DataProviderInterface
 
         $video = array_shift($videos);
 
-        return new Video($video, new EmbedCode());
+        $embedCode = $this->apiClient->getEmbedCode($options['vm_id'], $video->getId(), $options['player_id']);
+
+        return new Video($video, $embedCode);
     }
 
     /**
