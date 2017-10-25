@@ -2,9 +2,9 @@
 
 namespace MovingImage\DataProvider\Tests\VideoCollectionBundle\DataProvider;
 
-use Doctrine\Common\Collections\ArrayCollection;
 use MovingImage\Client\VMPro\Entity\VideosRequestParameters;
 use MovingImage\DataProvider\VideoManagerProSearch;
+use MovingImage\Client\VMPro\Collection\VideoCollection;
 
 class VideoManagerProSearchTest extends \PHPUnit_Framework_TestCase
 {
@@ -12,28 +12,27 @@ class VideoManagerProSearchTest extends \PHPUnit_Framework_TestCase
     {
         $client = $this->getMockBuilder('MovingImage\Client\VMPro\Interfaces\ApiClientInterface')->getMock();
 
-        $dataProvider = new VideoManagerProSearch($client);
-
         $vm_id = 5;
         $limit = 4;
+        $total_count = 10;
 
         $videoRequestParameters = new VideosRequestParameters();
-        $videoRequestParameters
-            ->set('include_channel_assignments', true)
-            ->set('include_custom_metadata', true)
-            ->set('include_keywords', true)
-            ->set('limit', $limit);
+        $videoRequestParameters->set('limit', $limit);
 
         $options = ['vm_id' => $vm_id, 'limit' => $limit];
-        $arrayCollection = new ArrayCollection();
+
+        $videoCollection = new VideoCollection($total_count, []);
 
         $client
             ->expects($this->once())
-            ->method('getVideos')
+            ->method('searchVideos')
             ->with($vm_id, $videoRequestParameters)
-            ->will($this->returnValue($arrayCollection));
+            ->will($this->returnValue($videoCollection));
+
+        $dataProvider = new VideoManagerProSearch($client);
 
         $return = $dataProvider->getAll($options);
-        $this->assertEquals($arrayCollection, $return);
+
+        $this->assertEquals([], $return);
     }
 }
