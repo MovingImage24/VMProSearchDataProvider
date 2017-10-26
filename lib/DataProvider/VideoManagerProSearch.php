@@ -51,14 +51,14 @@ class VideoManagerProSearch implements DataProviderInterface
      */
     public function getOne(array $options)
     {
+        $options['limit'] = 1;
+
+        //if we have id of video remove all parameters from option and stay only id
         if (isset($options['id'])) {
-            $videos = $this->getAll(['id' => $options['id']]);
-        } else {
-            // Simply fetch the first video from the collection, but without
-            // loading all videos inside the collection
-            $options['limit'] = 1;
-            $videos = $this->getAll($options);
+            $options = ['id'=>$options['id']];
         }
+
+        $videos = $this->getAll($options);
 
         if (count($videos) === 0) {
             return null;
@@ -72,8 +72,6 @@ class VideoManagerProSearch implements DataProviderInterface
     }
 
     /**
-     * CURRENTLY NOT IMPLEMENTED.
-     *
      * @param array $options
      *
      * @return int
