@@ -55,7 +55,7 @@ class VideoManagerProSearch implements DataProviderInterface
 
         //if we have id of video remove all parameters from option and stay only id
         if (isset($options['id'])) {
-            $options = ['id'=>$options['id']];
+            $options = ['id' => $options['id']];
         }
 
         $videos = $this->getAll($options);
