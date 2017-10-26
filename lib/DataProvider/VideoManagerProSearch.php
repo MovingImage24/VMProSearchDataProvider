@@ -2,7 +2,6 @@
 
 namespace MovingImage\DataProvider;
 
-use MovingImage\Client\VMPro\Entity\VideoRequestParameters;
 use MovingImage\Client\VMPro\Entity\VideosRequestParameters;
 use MovingImage\Client\VMPro\Interfaces\ApiClientInterface;
 use MovingImage\DataProvider\Interfaces\DataProviderInterface;
@@ -53,18 +52,13 @@ class VideoManagerProSearch implements DataProviderInterface
     {
         $options['limit'] = 1;
 
-        //if we have id of video remove all parameters from option and stay only id
-        if (isset($options['id'])) {
-            $options = ['id' => $options['id']];
-        }
-
         $videos = $this->getAll($options);
 
         if (count($videos) === 0) {
             return null;
         }
 
-        $video = array_shift($videos);
+        $video = current($videos);
 
         $embedCode = $this->apiClient->getEmbedCode($options['vm_id'], $video->getId(), $options['player_id']);
 
@@ -100,6 +94,7 @@ class VideoManagerProSearch implements DataProviderInterface
             'channel_id' => 'setChannelId',
             'order_property' => 'setOrderProperty',
             'offset' => 'setOffset',
+            'id' => 'setVideoId',
         ];
 
         foreach ($queryMethods as $key => $method) {
