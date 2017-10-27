@@ -103,6 +103,18 @@ class VideoManagerProSearch implements DataProviderInterface
             }
         }
 
+        if (isset($options['publication_state'])) {
+            switch ($options['publication_state']) {
+                case 'published':
+                    $parameters->setPublicationState(true);
+                    break;
+                case 'not_published':
+                    $parameters->setPublicationState(false);
+                    break;
+                //case 'all': do nothing
+            };
+        }
+
         return $parameters;
     }
 }
